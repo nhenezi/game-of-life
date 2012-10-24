@@ -2,11 +2,11 @@
 
 import sys
 import time
+import os
 from copy import deepcopy
 
-
 CELL = "*"
-EMPTY = "O"
+EMPTY = " "
 
 def pprint(board):
   for i in xrange(len(board)):
@@ -16,8 +16,8 @@ def pprint(board):
 
 def areSane(i, j, k, l, board):
   '''limit check'''
-  if (i + k) >= 0 and (i + k) < len(board)\
-        and (j + l) >= 0 and (j + l) < len(board):
+  if (i + k) > 0 and (i + k) < len(board)\
+        and (j + l) > 0 and (j + l) < len(board[i]):
     # ignore current field
     if k == 0 and l == 0:
       return False
@@ -27,6 +27,9 @@ def areSane(i, j, k, l, board):
 
 def mutate(board, i, j):
   '''checks if board[i][j] will mutate'''
+  if i == 0 or i == len(board)\
+        or j == 0 or j == len(board):
+    return EMPTY
   n = 0
   for k in xrange(-1, 2):
     for l in xrange(-1, 2):
@@ -56,17 +59,17 @@ if __name__ == "__main__":
   board = map(lambda x: 
               map(lambda y: y, x.replace("\n", ""))
               ,f.readlines())
-
   while (1):
     board_even = deepcopy(board)
     board_odd = deepcopy(board)
     for i in xrange(len(board)):
-      for j in xrange(len(board)):
+      for j in xrange(len(board[i])):
         if i%2 == 0:
           board_even[i][j] = mutate(board, i, j)
         else:
           board_odd[i][j] = mutate(board, i, j)
         
+    os.system('clear')
     board = combine(board_even, board_odd)
     pprint(board)
     time.sleep(0.5)
